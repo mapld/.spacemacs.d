@@ -263,7 +263,7 @@ you should place your code here."
   ( setq-default evil-escape-key-sequence "jk" )
   ( setq-default evil-escape-delay 0.5)
   (global-hl-line-mode -1)
-  ( setq-default org-agenda-files '("~/org"))
+
   ;; ( global-set-key (kbd "C-h") 'delete-backward-char)
   ( define-key key-translation-map (kbd "C-h") (kbd "<DEL>"))
 
@@ -278,6 +278,16 @@ you should place your code here."
 
   ( global-set-key (kbd "C-b") 'helm-find-files-up-one-level)
   ( spacemacs/set-leader-keys-for-major-mode 'org-mode "p" 'org-priority)
+
+  ;; org stuff 
+  ( setq-default org-agenda-files '("~/org"))
+
+  ;; make this a variable
+  (add-hook 'c++-mode-hook
+             (lambda ()
+               ( setq company-clang-arguments '("-std=c++11" "-stdlib=libc++" "-Ic:\\vs_dev_lib\\include" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++\\x86_64-w64-mingw32"))
+               ( setq flycheck-clang-args '("-std=c++11" "-stdlib=libc++" "-Ic:\\vs_dev_lib\\include" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++\\x86_64-w64-mingw32"))
+                            ))
 
   ;; Failed attempt to get bash for windows working in emacs shell
   ;; ( setq-default explicit-shell-file-name "c:/Windows/System32/bash.exe")
@@ -295,7 +305,11 @@ you should place your code here."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (ws-butler window-numbering volatile-highlights vi-tilde-fringe toc-org spaceline s powerline smooth-scrolling smeargle restart-emacs rainbow-delimiters popwin persp-mode pcre2el paradox hydra spinner page-break-lines orgit org-repo-todo org-present org-pomodoro alert log4e gntp org-plus-contrib org-bullets open-junk-file neotree move-text magit-gitflow macrostep lorem-ipsum linum-relative leuven-theme info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile helm-gitignore request helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger flycheck-pos-tip flycheck pkg-info epl flx-ido flx fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-args evil-anzu anzu eval-sexp-fu highlight elisp-slime-nav disaster define-word company-statistics company-quickhelp pos-tip company-c-headers company cmake-mode clean-aindent-mode clang-format buffer-move bracketed-paste auto-yasnippet yasnippet auto-highlight-symbol auto-compile packed dash aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup quelpa package-build use-package which-key bind-key bind-map evil spacemacs-theme))))
+    (ws-butler window-numbering volatile-highlights vi-tilde-fringe toc-org spaceline s powerline smooth-scrolling smeargle restart-emacs rainbow-delimiters popwin persp-mode pcre2el paradox hydra spinner page-break-lines orgit org-repo-todo org-present org-pomodoro alert log4e gntp org-plus-contrib org-bullets open-junk-file neotree move-text magit-gitflow macrostep lorem-ipsum linum-relative leuven-theme info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile helm-gitignore request helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger flycheck-pos-tip flycheck pkg-info epl flx-ido flx fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-args evil-anzu anzu eval-sexp-fu highlight elisp-slime-nav disaster define-word company-statistics company-quickhelp pos-tip company-c-headers company cmake-mode clean-aindent-mode clang-format buffer-move bracketed-paste auto-yasnippet yasnippet auto-highlight-symbol auto-compile packed dash aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup quelpa package-build use-package which-key bind-key bind-map evil spacemacs-theme)))
+ '(safe-local-variable-values
+   (quote
+    ((company-clang-arguments "-Ic:/vs_dev_lib/include/")
+     (company-clang-arguments "c:/vs_dev_lib/include/")))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
