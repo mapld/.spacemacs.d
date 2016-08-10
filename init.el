@@ -250,7 +250,6 @@ before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
   (setq-default helm-recentf-fuzzy-match t)
   (setq-default helm-mode-fuzzy-match t)
-  
   )
 
 (defun dotspacemacs/user-config ()
@@ -279,8 +278,18 @@ you should place your code here."
   ( global-set-key (kbd "C-b") 'helm-find-files-up-one-level)
   ( spacemacs/set-leader-keys-for-major-mode 'org-mode "p" 'org-priority)
 
-  ;; org stuff 
+  ;; org stuff
+  ( setq org-directory "~/org")
   ( setq-default org-agenda-files '("~/org"))
+  ( setq org-default-notes-file "~/org/notes.org" )
+
+  ( setq org-capture-templates
+         (quote (("t" "todo" entry (file "~/org/todo.org")
+                  "* TODO %?\n %i\n %a" :clock-in t :clock-resume t))))
+
+  (spacemacs/set-leader-keys
+    "oc" 'org-capture)
+
 
   ;; make this a variable
   (add-hook 'c++-mode-hook
