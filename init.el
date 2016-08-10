@@ -3,6 +3,7 @@
 ;; It must be stored in your home directory.
 
 (defun dotspacemacs/layers ()
+  (setq-default )
   "Configuration Layers declaration.
 You should not put any user code in this function besides modifying the variable
 values."
@@ -23,6 +24,10 @@ values."
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
+
+     (c-c++ :variables
+              c-c++-enable-clang-support t
+              c-c++-default-mode-for-headers 'c++-mode)
      auto-completion
      ;; better-defaults
      emacs-lisp
@@ -245,6 +250,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
   (setq-default helm-recentf-fuzzy-match t)
   (setq-default helm-mode-fuzzy-match t)
+  
   )
 
 (defun dotspacemacs/user-config ()
@@ -265,13 +271,35 @@ you should place your code here."
   ( define-key evil-normal-state-map (kbd "<DEL>") 'evil-window-left)
   ( define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
   ( define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
-  ( define-key evil-normal-state-map (kbd "C-j") 'evil-window-up)
+  ( define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
 
   ( define-key evil-normal-state-map (kbd "B") 'evil-digit-argument-or-evil-beginning-of-line)
   ( define-key evil-normal-state-map (kbd "E") 'evil-end-of-line)
 
   ( global-set-key (kbd "C-b") 'helm-find-files-up-one-level)
+  ( spacemacs/set-leader-keys-for-major-mode 'org-mode "p" 'org-priority)
 
-  )
+  ;; Failed attempt to get bash for windows working in emacs shell
+  ;; ( setq-default explicit-shell-file-name "c:/Windows/System32/bash.exe")
+  ;; ( setq-default shell-file-name "bash")
+  ;; ( setq-default explicit-bash-args '("--noediting" "--login" "-i"))
+  ;; (setenv "SHELL" shell-file-name)
+
+    )
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (ws-butler window-numbering volatile-highlights vi-tilde-fringe toc-org spaceline s powerline smooth-scrolling smeargle restart-emacs rainbow-delimiters popwin persp-mode pcre2el paradox hydra spinner page-break-lines orgit org-repo-todo org-present org-pomodoro alert log4e gntp org-plus-contrib org-bullets open-junk-file neotree move-text magit-gitflow macrostep lorem-ipsum linum-relative leuven-theme info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile helm-gitignore request helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger flycheck-pos-tip flycheck pkg-info epl flx-ido flx fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-args evil-anzu anzu eval-sexp-fu highlight elisp-slime-nav disaster define-word company-statistics company-quickhelp pos-tip company-c-headers company cmake-mode clean-aindent-mode clang-format buffer-move bracketed-paste auto-yasnippet yasnippet auto-highlight-symbol auto-compile packed dash aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup quelpa package-build use-package which-key bind-key bind-map evil spacemacs-theme))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
+ '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
