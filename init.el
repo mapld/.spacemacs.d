@@ -264,6 +264,8 @@ you should place your code here."
   ( setq-default evil-escape-delay 0.5)
   (global-hl-line-mode -1)
 
+  ;; autocommit var
+  ( setq-default gac-automatically-push-p t )
 
   ;; ( global-set-key (kbd "C-h") 'delete-backward-char)
   ( define-key key-translation-map (kbd "C-h") (kbd "<DEL>"))
