@@ -265,6 +265,9 @@ you should place your code here."
   ( setq-default evil-escape-delay 0.5)
   (global-hl-line-mode -1)
 
+  ;; start emacs maximized
+  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+
   ;; autocommit var
   ( setq-default gac-automatically-push-p t )
 
