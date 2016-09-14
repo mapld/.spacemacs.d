@@ -316,6 +316,15 @@ you should place your code here."
 
   ( spacemacs/set-leader-keys-for-major-mode 'c++-mode "j" 'semantic-ia-fast-jump)
 
+  (setq debug-on-error t)
+
+  ;; babel langauge support
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((sql . t)))
+
+  (add-to-list 'org-babel-default-header-args:sql '(:engine . "postgresql"))
+  (add-to-list 'org-babel-default-header-args:sql '(:cmdline . "-h studentdb.csc.uvic.ca -U alrm imdb"))
 
   ;; make this a variable
   (add-hook 'c++-mode-hook
