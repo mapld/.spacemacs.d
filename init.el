@@ -325,7 +325,7 @@ you should place your code here."
 
   (add-to-list 'org-babel-default-header-args:sql '(:engine . "postgresql"))
   (add-to-list 'org-babel-default-header-args:sql '(:cmdline . "-h studentdb.csc.uvic.ca -U alrm imdb"))
-  (add-to-list 'org-babel-default-header-args:sql '(:exports . "results"))
+  (add-to-list 'org-babel-default-header-args:sql '(:exports . "both"))
 
   ;; make this a variable
   (add-hook 'c++-mode-hook
