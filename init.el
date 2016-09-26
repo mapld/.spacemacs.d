@@ -316,7 +316,8 @@ you should place your code here."
 
   ( spacemacs/set-leader-keys-for-major-mode 'c++-mode "j" 'semantic-ia-fast-jump)
 
-  (setq debug-on-error t)
+  ;; set this to t to have more details popup when errors happen
+  ;;(setq debug-on-error t)
 
   ;; babel langauge support
   (org-babel-do-load-languages
@@ -333,6 +334,7 @@ you should place your code here."
                ( setq company-clang-arguments '("-std=c++11" "-stdlib=libc++" "-Ic:\\vs_dev_lib\\include" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++\\x86_64-w64-mingw32"))
                ( setq flycheck-clang-args '("-std=c++11" "-stdlib=libc++" "-Ic:\\vs_dev_lib\\include" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++\\x86_64-w64-mingw32"))
                             ))
+
 
   ;; Failed attempt to get bash for windows working in emacs shell
   ;; ( setq-default explicit-shell-file-name "c:/Windows/System32/bash.exe")
