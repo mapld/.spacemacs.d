@@ -33,7 +33,6 @@ values."
      emacs-lisp
      semantic
      git
-     ;; markdown
      org
      ;; (shell :variables
      ;;        shell-default-height 30
@@ -41,6 +40,7 @@ values."
      spell-checking
      syntax-checking
      ;; version-control
+     java
      c-c++
      python
      rcirc
@@ -270,6 +270,13 @@ you should place your code here."
   (add-to-list 'exec-path "C:/Program Files (x86)/Aspell/bin/")
   (setq ispell-program-name "aspell")
 
+  ;; eclim (java eclipse frontend)
+  (setq eclim-eclipse-dirs "C:/Users/Alrehn/java-neon/eclipse"
+        eclim-executable "C:/Users/Alrehn/java-neon/eclipse/eclim")
+
+  ;; company mode
+  (setq company-idle-delay 0.8)
+
   ;; start emacs maximized
   (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
@@ -299,6 +306,8 @@ you should place your code here."
   ( define-key evil-normal-state-map (kbd "B") 'evil-digit-argument-or-evil-beginning-of-line)
   ( define-key evil-normal-state-map (kbd "E") 'evil-end-of-line)
 
+  ( define-key evil-insert-state-map (kbd "C-<tab>") 'company-complete)
+
   ( global-set-key (kbd "C-b") 'helm-find-files-up-one-level)
   ( spacemacs/set-leader-keys-for-major-mode 'org-mode "p" 'org-priority)
 
@@ -315,6 +324,8 @@ you should place your code here."
     "oc" 'org-capture)
 
   ( spacemacs/set-leader-keys-for-major-mode 'c++-mode "j" 'semantic-ia-fast-jump)
+
+  ( setq python-shell-interpreter "c:/Users/Alrehn/Anaconda3/Scripts/ipython3.exe")
 
   ;; set this to t to have more details popup when errors happen
   ;;(setq debug-on-error t)
@@ -352,7 +363,7 @@ you should place your code here."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (stickyfunc-enhance srefactor helm-flyspell auto-dictionary pyvenv pytest pyenv-mode py-yapf pip-requirements hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic f git-auto-commit-mode rcirc-notify rcirc-color ws-butler window-numbering volatile-highlights vi-tilde-fringe toc-org spaceline s powerline smooth-scrolling smeargle restart-emacs rainbow-delimiters popwin persp-mode pcre2el paradox hydra spinner page-break-lines orgit org-repo-todo org-present org-pomodoro alert log4e gntp org-plus-contrib org-bullets open-junk-file neotree move-text magit-gitflow macrostep lorem-ipsum linum-relative leuven-theme info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile helm-gitignore request helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger flycheck-pos-tip flycheck pkg-info epl flx-ido flx fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-args evil-anzu anzu eval-sexp-fu highlight elisp-slime-nav disaster define-word company-statistics company-quickhelp pos-tip company-c-headers company cmake-mode clean-aindent-mode clang-format buffer-move bracketed-paste auto-yasnippet yasnippet auto-highlight-symbol auto-compile packed dash aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup quelpa package-build use-package which-key bind-key bind-map evil spacemacs-theme)))
+    (yapfify uuidgen py-isort org-projectile org-download live-py-mode link-hint hide-comnt git-link flyspell-correct-helm flyspell-correct eyebrowse evil-visual-mark-mode evil-unimpaired evil-ediff dumb-jump company-emacs-eclim eclim column-enforce-mode stickyfunc-enhance srefactor helm-flyspell auto-dictionary pyvenv pytest pyenv-mode py-yapf pip-requirements hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic f git-auto-commit-mode rcirc-notify rcirc-color ws-butler window-numbering volatile-highlights vi-tilde-fringe toc-org spaceline s powerline smooth-scrolling smeargle restart-emacs rainbow-delimiters popwin persp-mode pcre2el paradox hydra spinner page-break-lines orgit org-repo-todo org-present org-pomodoro alert log4e gntp org-plus-contrib org-bullets open-junk-file neotree move-text magit-gitflow macrostep lorem-ipsum linum-relative leuven-theme info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile helm-gitignore request helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger flycheck-pos-tip flycheck pkg-info epl flx-ido flx fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-args evil-anzu anzu eval-sexp-fu highlight elisp-slime-nav disaster define-word company-statistics company-quickhelp pos-tip company-c-headers company cmake-mode clean-aindent-mode clang-format buffer-move bracketed-paste auto-yasnippet yasnippet auto-highlight-symbol auto-compile packed dash aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup quelpa package-build use-package which-key bind-key bind-map evil spacemacs-theme)))
  '(safe-local-variable-values
    (quote
     ((company-clang-arguments "-Ic:/vs_dev_lib/include/")
