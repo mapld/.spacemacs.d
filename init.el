@@ -271,8 +271,8 @@ you should place your code here."
   (setq ispell-program-name "aspell")
 
   ;; eclim (java eclipse frontend)
-  (setq eclim-eclipse-dirs "C:/Users/Alrehn/java-neon/eclipse"
-        eclim-executable "C:/Users/Alrehn/java-neon/eclipse/eclim")
+  (setq eclim-eclipse-dirs "D:/eclipse/java-latest-released/eclipse"
+        eclim-executable "D:/eclipse/java-latest-released/eclim")
 
   ;; company mode
   (setq company-idle-delay 0.8)
