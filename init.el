@@ -272,7 +272,7 @@ you should place your code here."
 
   ;; eclim (java eclipse frontend)
   (setq eclim-eclipse-dirs "D:/eclipse/java-latest-released/eclipse"
-        eclim-executable "D:/eclipse/java-latest-released/eclim")
+        eclim-executable "D:/eclipse/java-latest-released/eclipse/eclim")
 
   ;; company mode
   (setq company-idle-delay 0.8)
