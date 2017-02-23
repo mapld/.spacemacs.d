@@ -277,8 +277,8 @@ you should place your code here."
   ;; company mode
   (setq company-idle-delay 0.8)
 
-  ;; start emacs maximized
-  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+  ;; mobileorg
+  (setq org-mobile-directory "C:/Users/Alrehn/Dropbox/Apps/MobileOrg")
 
   ;; autocommit var
   ( setq-default gac-automatically-push-p t )
