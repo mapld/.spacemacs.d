@@ -343,14 +343,18 @@ you should place your code here."
   ( setq org-default-notes-file "~/org/notes.org" )
 
   ( setq org-todo-keywords
-         '((sequence
+         '(
+           (sequence "REPEAT"
+                     "STOPPED")
+           (sequence
                      "FUTURE"
-                     "DELEGATED"
                      "DOING"
                      "BLOCKED"
                      "REVIEW"
                      "TODO"
+                     "|"
                      "DONE"
+                     "DELEGATED"
                      )))
 
   ;; custom todo display bound to SPC o c
