@@ -346,10 +346,10 @@ you should place your code here."
          '((sequence
                      "FUTURE"
                      "DELEGATED"
-                     "TODO"
                      "DOING"
                      "BLOCKED"
                      "REVIEW"
+                     "TODO"
                      "DONE"
                      )))
 
