@@ -365,12 +365,6 @@ you should place your code here."
 
 
 
-  ;; mobileorg
-  (setq org-mobile-directory "C:/Users/Alrehn/Dropbox/Apps/MobileOrg")
-
-  ;; autocommit var
-  ( setq-default gac-automatically-push-p t )
-
   ;; ( global-set-key (kbd "C-h") 'delete-backward-char)
   ( define-key key-translation-map (kbd "C-h") (kbd "<DEL>"))
 
@@ -396,17 +390,34 @@ you should place your code here."
 
   ( define-key evil-insert-state-map (kbd "C-<tab>") 'company-complete)
 
+
+  ;; org stuff
   ( global-set-key (kbd "C-b") 'helm-find-files-up-one-level)
   ( spacemacs/set-leader-keys-for-major-mode 'org-mode "p" 'org-priority)
 
-  ;; org stuff
+  ;; structure templates
+ ;; (add-to-list 'org-structure-template-alist
+ ;;              (list "p" (concat ":PROPERTIES:\n"
+ ;;                                "?\n"
+ ;;                                ":END:")))
+ ;; (add-to-list 'org-structure-template-alist
+ ;;              (list "eh" (concat ":EXPORT_FILE_NAME: ?\n"
+ ;;                                 ":EXPORT_TITLE:\n"
+ ;;                                 ":EXPORT_OPTIONS: toc:nil html-postamble:nil num:nil"))) 
+
+  ;; mobileorg
+  (setq org-mobile-directory "C:/Users/Alrehn/Dropbox/Apps/MobileOrg")
+
+  ;; autocommit var
+  ( setq-default gac-automatically-push-p t )
+
   ( setq org-directory "~/org")
   ( setq-default org-agenda-files '("~/org"))
   ( setq org-default-notes-file "~/org/notes.org" )
 
-  ( setq org-hierarchical-todo-statistics nil)
+  (setq org-hierarchical-todo-statistics nil)
 
-  ( setq org-todo-keywords
+  (setq org-todo-keywords
          '(
            (sequence
                      "TODO"
@@ -416,24 +427,45 @@ you should place your code here."
            (sequence
                      "FUTURE"
                      "WAITING"
+                     "NEXT"
+                     "DOING"
                      "|"
                      "DELEGATED"
                      "CANCELLED"
-                     )))
+                     ))) 
 
-  ;; custom todo display bound to SPC o c
+  ;; custom agenda display bound to SPC o c
   (setq org-agenda-custom-commands
-        '(("g" todo "TODO|DOING")))
+        '(
+          ("g" todo "TODO|DOING|NEXT")
+          ("c" "Agenda view"
+           (
+            (agenda "" ((org-agenda-span 1)) )
+            (todo "NEXT|WAITING|DOING")
+            (todo "TODO"
+                  ((org-agenda-overriding-header "\nUnscheduled TODO")
+                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp))
+                   ))
+          )))) 
   (defun org-agenda-show-todos (&optional arg)
     (interactive "P")
     (org-agenda arg "g"))
   (spacemacs/set-leader-keys "ot" 'org-agenda-show-todos)
+  ;; schedule bound to SPC o a
+  (defun org-agenda-show-schedule (&optional arg)
+    (interactive "P")
+    (org-agenda arg "c")) 
+  (spacemacs/set-leader-keys "oa" 'org-agenda-show-schedule)
+  (defun org-agenda-show-week (&optional arg)
+    (interactive "P")
+    (org-agenda arg "a")) 
+  (spacemacs/set-leader-keys "ow" 'org-agenda-show-week) 
+
 
   (setq org-refile-targets '(
-                              ("~/org/plan.org" :maxlevel . 1)
-                              ("~/org/abe.org" :maxlevel . 4)
-                              ))
-
+                             ("~/org/plan.org" :maxlevel . 1)
+                             ("~/org/abe.org" :maxlevel . 4)
+                             ))
   ;; super agenda
   (org-super-agenda-mode)
   (setq org-super-agenda-groups
@@ -450,12 +482,6 @@ you should place your code here."
                   :not (:tag "work")))
            (:auto-category t)
            )) 
-
-  ;; schedule bound to SPC o a
-  (defun org-agenda-show-schedule (&optional arg)
-    (interactive "P")
-    (org-agenda arg "a"))
-  (spacemacs/set-leader-keys "oa" 'org-agenda-show-schedule)
 
   ( setq org-capture-templates
          ;; todos
