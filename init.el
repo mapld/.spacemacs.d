@@ -430,6 +430,7 @@ you should place your code here."
                      "NEXT"
                      "DOING"
                      "|"
+                     "COMPLETE"
                      "DELEGATED"
                      "CANCELLED"
                      ))) 
@@ -441,7 +442,8 @@ you should place your code here."
           ("c" "Agenda view"
            (
             (agenda "" ((org-agenda-span 1)) )
-            (todo "NEXT|WAITING|DOING")
+            (todo "DOING|WAITING")
+            (todo "NEXT")
             (todo "TODO"
                   ((org-agenda-overriding-header "\nUnscheduled TODO")
                    (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp))
