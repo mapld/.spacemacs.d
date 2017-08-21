@@ -399,7 +399,7 @@ you should place your code here."
   ( global-set-key (kbd "C-b") 'helm-find-files-up-one-level)
   ( spacemacs/set-leader-keys-for-major-mode 'org-mode "p" 'org-priority)
 
-  ;; structure templates
+ ;; structure templates
  ;; (add-to-list 'org-structure-template-alist
  ;;              (list "p" (concat ":PROPERTIES:\n"
  ;;                                "?\n"
@@ -407,7 +407,7 @@ you should place your code here."
  ;; (add-to-list 'org-structure-template-alist
  ;;              (list "eh" (concat ":EXPORT_FILE_NAME: ?\n"
  ;;                                 ":EXPORT_TITLE:\n"
- ;;                                 ":EXPORT_OPTIONS: toc:nil html-postamble:nil num:nil"))) 
+ ;;                                 ":EXPORT_OPTIONS: toc:nil html-postamble:nil num:nil")))
 
   ;; mobileorg
   (setq org-mobile-directory "C:/Users/Alrehn/Dropbox/Apps/MobileOrg")
@@ -555,22 +555,12 @@ you should place your code here."
    'org-babel-load-languages
    '((sql . t))) 
 
-;;    (add-to-list 'org-babel-default-header-args:sql '(:engine . "postgresql")) 
-;;    (add-to-list 'org-babel-default-header-args:sql '(:cmdline . "-h viclabbas01.abebooks.com:8192 -U abedba")) 
-;;    (add-to-list 'org-babel-default-header-args:sql '(:exports . "both")) 
-
   ;; make this a variable
   (add-hook 'c++-mode-hook
              (lambda ()
                ( setq company-clang-arguments '("-std=c++11" "-stdlib=libc++" "-Ic:\\vs_dev_lib\\include" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++\\x86_64-w64-mingw32"))
                ( setq flycheck-clang-args '("-std=c++11" "-stdlib=libc++" "-Ic:\\vs_dev_lib\\include" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++\\x86_64-w64-mingw32"))
                             ))
-
-  ;; Failed attempt to get bash for windows working in emacs shell
-  ;; ( setq-default explicit-shell-file-name "c:/Windows/System32/bash.exe")
-  ;; ( setq-default shell-file-name "bash")
-  ;; ( setq-default explicit-bash-args '("--noediting" "--login" "-i"))
-  ;; (setenv "SHELL" shell-file-name)
 
     )
 ;; Do not write anything past this comment. This is where Emacs will
