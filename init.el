@@ -361,10 +361,6 @@ you should place your code here."
    ;;           ( setq flycheck-clang-args '("-std=c++11" "-stdlib=libc++" "-Ic:\\vs_dev_lib\\include" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++\\x86_64-w64-mingw32"))
    ;;           ))
 
-
-
-
-
   ;; ( global-set-key (kbd "C-h") 'delete-backward-char)
   ( define-key key-translation-map (kbd "C-h") (kbd "<DEL>"))
 
@@ -442,8 +438,7 @@ you should place your code here."
           ("c" "Agenda view"
            (
             (agenda "" ((org-agenda-span 1)) )
-            (todo "DOING|WAITING")
-            (todo "NEXT")
+            (todo "DOING|WAITING|NEXT")
             (todo "TODO"
                   ((org-agenda-overriding-header "\nUnscheduled TODO")
                    (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp))
@@ -470,20 +465,41 @@ you should place your code here."
                              ))
   ;; super agenda
   (org-super-agenda-mode)
+  
+  ;;(let ((deadline-date  (org-read-date nil nil "+7") ) )
   (setq org-super-agenda-groups
          '(
-           (:name "Today"
-                  :time-grid t)
            (:name "Deadlines"
                   :deadline t)
-           (:name "Work"
-                        :tag ("work" "abe"))
+           (:name "Active Projects/Stories"
+                  :tag ("story" "project")
+                  :and (:children t :todo "DOING")
+                  )
+           (:name "Active Tasks"
+                  :and (:not (:children t) :todo "DOING")
+                  )
+           (:name "Waiting"
+                  :todo "WAITING"
+                  )
+           (:name "Next"
+                  :todo "NEXT"
+                  )
+           (:name ""
+                  :and (:not (:children t) :todo "DOING")
+                  )
+           (:name "Today"
+                  :time-grid t)
            (:name "Personal"
                   :tag "personal"
                   :and (:habit t
                   :not (:tag "work")))
-           (:auto-category t)
+           (:name "Work"
+                  :tag ("work" "abe"))
+           (:name "Next"
+                  :todo "NEXT" )
+           ;;(:auto-category t)
            )) 
+  ;;) 
 
   ( setq org-capture-templates
          ;; todos
@@ -525,13 +541,13 @@ you should place your code here."
   ;;(setq debug-on-error t)
 
   ;; babel langauge support
-  ;;(org-babel-do-load-languages
-  ;; 'org-babel-load-languages
-  ;; '((sql . t)))
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((sql . t))) 
 
-  ;;(add-to-list 'org-babel-default-header-args:sql '(:engine . "postgresql"))
-  ;;(add-to-list 'org-babel-default-header-args:sql '(:cmdline . "-h studentdb.csc.uvic.ca -U alrm imdb"))
-  ;;(add-to-list 'org-babel-default-header-args:sql '(:exports . "both"))
+;;    (add-to-list 'org-babel-default-header-args:sql '(:engine . "postgresql")) 
+;;    (add-to-list 'org-babel-default-header-args:sql '(:cmdline . "-h viclabbas01.abebooks.com:8192 -U abedba")) 
+;;    (add-to-list 'org-babel-default-header-args:sql '(:exports . "both")) 
 
   ;; make this a variable
   (add-hook 'c++-mode-hook
