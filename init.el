@@ -369,7 +369,6 @@ you should place your code here."
 
   (flyspell-lazy-mode 1)
 
-
   ;; ( global-set-key (kbd "C-h") 'delete-backward-char)
   ( define-key key-translation-map (kbd "C-h") (kbd "<DEL>"))
 
@@ -400,7 +399,7 @@ you should place your code here."
   ( global-set-key (kbd "C-b") 'helm-find-files-up-one-level)
   ( spacemacs/set-leader-keys-for-major-mode 'org-mode "p" 'org-priority)
 
-  ;; structure templates
+ ;; structure templates
  ;; (add-to-list 'org-structure-template-alist
  ;;              (list "p" (concat ":PROPERTIES:\n"
  ;;                                "?\n"
@@ -408,7 +407,7 @@ you should place your code here."
  ;; (add-to-list 'org-structure-template-alist
  ;;              (list "eh" (concat ":EXPORT_FILE_NAME: ?\n"
  ;;                                 ":EXPORT_TITLE:\n"
- ;;                                 ":EXPORT_OPTIONS: toc:nil html-postamble:nil num:nil"))) 
+ ;;                                 ":EXPORT_OPTIONS: toc:nil html-postamble:nil num:nil")))
 
   ;; mobileorg
   (setq org-mobile-directory "C:/Users/Alrehn/Dropbox/Apps/MobileOrg")
@@ -447,8 +446,7 @@ you should place your code here."
           ("c" "Agenda view"
            (
             (agenda "" ((org-agenda-span 1)) )
-            (todo "DOING|WAITING")
-            (todo "NEXT")
+            (todo "DOING|WAITING|NEXT")
             (todo "TODO"
                   ((org-agenda-overriding-header "\nUnscheduled TODO")
                    (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp))
@@ -475,21 +473,42 @@ you should place your code here."
                              ))
   ;; super agenda
   (org-super-agenda-mode)
+  
+  ;;(let ((deadline-date  (org-read-date nil nil "+7") ) )
   (setq org-super-agenda-groups
          '(
-           (:name "Today"
-                  :time-grid t
-                  :tag "chores")
            (:name "Deadlines"
                   :deadline t)
-           (:name "Work"
-                        :tag ("work" "abe"))
+           (:name "Active Projects/Stories"
+                  :tag ("story" "project")
+                  :and (:children t :todo "DOING")
+                  )
+           (:name "Active Tasks"
+                  :and (:not (:children t) :todo "DOING")
+                  )
+           (:name "Waiting"
+                  :todo "WAITING"
+                  )
+           (:name "Next"
+                  :todo "NEXT"
+                  )
+           (:name ""
+                  :and (:not (:children t) :todo "DOING")
+                  )
+           (:name "Today"
+                  :tag "chores"
+                  :time-grid t)
            (:name "Personal"
                   :tag "personal"
                   :and (:habit t
                   :not (:tag "work")))
-           (:auto-category t)
+           (:name "Work"
+                  :tag ("work" "abe"))
+           (:name "Next"
+                  :todo "NEXT" )
+           ;;(:auto-category t)
            )) 
+  ;;) 
 
   ( setq org-capture-templates
          ;; todos
@@ -533,13 +552,9 @@ you should place your code here."
   ;;(setq debug-on-error t)
 
   ;; babel langauge support
-  ;;(org-babel-do-load-languages
-  ;; 'org-babel-load-languages
-  ;; '((sql . t)))
-
-  ;;(add-to-list 'org-babel-default-header-args:sql '(:engine . "postgresql"))
-  ;;(add-to-list 'org-babel-default-header-args:sql '(:cmdline . "-h studentdb.csc.uvic.ca -U alrm imdb"))
-  ;;(add-to-list 'org-babel-default-header-args:sql '(:exports . "both"))
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((sql . t))) 
 
   ;; make this a variable
   (add-hook 'c++-mode-hook
@@ -547,12 +562,6 @@ you should place your code here."
                ( setq company-clang-arguments '("-std=c++11" "-stdlib=libc++" "-Ic:\\vs_dev_lib\\include" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++\\x86_64-w64-mingw32"))
                ( setq flycheck-clang-args '("-std=c++11" "-stdlib=libc++" "-Ic:\\vs_dev_lib\\include" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++\\x86_64-w64-mingw32"))
                             ))
-
-  ;; Failed attempt to get bash for windows working in emacs shell
-  ;; ( setq-default explicit-shell-file-name "c:/Windows/System32/bash.exe")
-  ;; ( setq-default shell-file-name "bash")
-  ;; ( setq-default explicit-bash-args '("--noediting" "--login" "-i"))
-  ;; (setenv "SHELL" shell-file-name)
 
     )
 ;; Do not write anything past this comment. This is where Emacs will
