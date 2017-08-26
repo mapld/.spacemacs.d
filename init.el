@@ -19,6 +19,9 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
+     windows-scripts
+     yaml
+     javascript
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
@@ -26,7 +29,7 @@ values."
      ;; ----------------------------------------------------------------
 
      (c-c++ :variables
-              c-c++-enable-clang-support t
+              ;;c-c++-enable-clang-support t
               c-c++-default-mode-for-headers 'c++-mode)
      auto-completion
      ;; better-defaults
@@ -44,12 +47,22 @@ values."
      c-c++
      python
      rcirc
+
+     sql
+
+     osx
+
+     shell
+
+     markdown
+
+     gtags
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '(git-auto-commit-mode)
+dotspacemacs-additional-packages '(git-auto-commit-mode ensime sbt-mode groovy-mode groovy-imports sql-indent org-super-agenda irony company-irony flycheck-irony flycheck-pos-tip helm-gtags flyspell-lazy)
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
@@ -253,6 +266,8 @@ before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
   (setq-default helm-recentf-fuzzy-match t)
   (setq-default helm-mode-fuzzy-match t)
+  (push '("melpa-stable" . "stable.melpa.org/packages/") configuration-layer--elpa-archives)
+  (push '(ensime . "melpa-stable") package-pinned-packages)
   )
 
 (defun dotspacemacs/user-config ()
@@ -274,14 +289,85 @@ you should place your code here."
   (setq eclim-eclipse-dirs "D:/eclipse/java-latest-released/eclipse"
         eclim-executable "D:/eclipse/java-latest-released/eclipse/eclim")
 
+  (use-package ensime
+    :commands ensime ensime-mode)
+  (add-hook 'java-mode-hook 'ensime-mode)
+
+  ;; groovy
+  (add-to-list 'auto-mode-alist '("\\.groovy\\'" . groovy-mode))
+  (setq groovy-imports-cache-name "~/org/.groovy-imports")
+  (setq groovy-imports-find-block-function 'groovy-imports-find-place-sorted-block)
+  (add-hook 'groovy-mode-hook 'groovy-imports-scan-file)
+  (spacemacs/set-leader-keys-for-major-mode 'groovy-mode "i" 'groovy-imports-add-import-dwim)
+  (spacemacs/set-leader-keys-for-major-mode 'groovy-mode "tf" 'ggtags-find-tag-dwim)
+  (spacemacs/set-leader-keys-for-major-mode 'groovy-mode "tn" 'ggtags-find-tag-continue)
+
+  (spacemacs/set-leader-keys-for-major-mode 'java-mode "tf" 'ggtags-find-tag-dwim)
+  (spacemacs/set-leader-keys-for-major-mode 'java-mode "tn" 'ggtags-find-tag-continue)
+
+  (use-package sbt-mode
+    :commands sbt-start sbt-command
+    :config
+    (substitute-key-definition
+     'minibuffer-complete-word
+     'self-insert-command
+     minibuffer-local-completion-map))
+
+  ( define-key evil-normal-state-map (kbd "C-O") 'ensime-edit-definition)
+  ( define-key evil-normal-state-map (kbd "C-P") 'ensime-edit-definition-other-window)
+
   ;; company mode
   (setq company-idle-delay 0.8)
+  (add-hook 'c++-mode-hook 'irony-mode)
+  (add-hook 'c-mode-hook 'irony-mode)
 
-  ;; start emacs maximized
-  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
-  ;; autocommit var
-  ( setq-default gac-automatically-push-p t )
+  (eval-after-load 'c++-mode
+    (when (boundp 'company-backends)
+    (make-local-variable 'company-backends)
+    (setq company-backends (delete 'company-dabbrev-code company-backends))))
+
+  (eval-after-load 'company
+    '(add-to-list 'company-backends 'company-irony))
+
+  (eval-after-load 'flycheck
+    '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
+
+  ;;(defun my-c-common-setup ()    ;; function called by c-mode-common-hook
+  ;;  (irony-mode 1)
+  ;;  (company-mode))
+
+  ;; replace the `completion-at-point' and `complete-symbol' bindings in
+  ;; irony-mode's buffers by irony-mode's function
+  ;;(add-to-list 'auto-mode-alist '("\\.cpp$" . irony-mode))
+  ;;(add-to-list 'auto-mode-alist '("\\.c$" . irony-mode))
+  ;;(add-to-list 'auto-mode-alist '("\\.h$" . irony-mode))
+
+ ;; (defun my-irony-mode-hook ()
+ ;;   (define-key irony-mode-map [remap completion-at-point]
+ ;;     'irony-completion-at-point-async)
+ ;;    (define-key irony-mode-map [remap complete-symbol]
+ ;;     'irony-completion-at-point-async))
+
+ ;; (add-hook 'irony-mode-hook 'my-irony-mode-hook)
+ ;; (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+
+  (when (boundp 'w32-pipe-read-delay)
+    (setq w32-pipe-read-delay 0))
+  ;; Set the buffer size to 64K on Windows (from the original 4K)
+  (when (boundp 'w32-pipe-buffer-size)
+    (setq irony-server-w32-pipe-buffer-size (* 64 1024)))
+
+  ;; make this a variable
+  ;;(add-hook 'c++-mode-hook
+   ;;         (lambda ()
+   ;;           ( setq company-clang-executable "clang++.exe")
+   ;;           ( setq company-clang-arguments '("-std=c++11" "-stdlib=libc++" "-Ic:\\vs_dev_lib\\include" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++\\x86_64-w64-mingw32 -IC:\\vs_dev_lib\\lib\\include -I../include"))
+   ;;           ( setq flycheck-clang-args '("-std=c++11" "-stdlib=libc++" "-Ic:\\vs_dev_lib\\include" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++\\x86_64-w64-mingw32"))
+   ;;           ))
+
+  (flyspell-lazy-mode 1)
 
   ;; ( global-set-key (kbd "C-h") 'delete-backward-char)
   ( define-key key-translation-map (kbd "C-h") (kbd "<DEL>"))
@@ -308,22 +394,157 @@ you should place your code here."
 
   ( define-key evil-insert-state-map (kbd "C-<tab>") 'company-complete)
 
+
+  ;; org stuff
   ( global-set-key (kbd "C-b") 'helm-find-files-up-one-level)
   ( spacemacs/set-leader-keys-for-major-mode 'org-mode "p" 'org-priority)
 
-  ;; org stuff
+ ;; structure templates
+ ;; (add-to-list 'org-structure-template-alist
+ ;;              (list "p" (concat ":PROPERTIES:\n"
+ ;;                                "?\n"
+ ;;                                ":END:")))
+ ;; (add-to-list 'org-structure-template-alist
+ ;;              (list "eh" (concat ":EXPORT_FILE_NAME: ?\n"
+ ;;                                 ":EXPORT_TITLE:\n"
+ ;;                                 ":EXPORT_OPTIONS: toc:nil html-postamble:nil num:nil")))
+
+  ;; mobileorg
+  (setq org-mobile-directory "C:/Users/Alrehn/Dropbox/Apps/MobileOrg")
+
+  ;; autocommit var
+  ( setq-default gac-automatically-push-p t )
+
   ( setq org-directory "~/org")
   ( setq-default org-agenda-files '("~/org"))
   ( setq org-default-notes-file "~/org/notes.org" )
 
+  (setq org-hierarchical-todo-statistics nil)
+
+  (setq org-todo-keywords
+         '(
+           (sequence
+                     "TODO"
+                     "|"
+                     "DONE"
+           )
+           (sequence
+                     "FUTURE"
+                     "WAITING"
+                     "NEXT"
+                     "DOING"
+                     "|"
+                     "COMPLETE"
+                     "DELEGATED"
+                     "CANCELLED"
+                     ))) 
+
+  ;; custom agenda display bound to SPC o c
+  (setq org-agenda-custom-commands
+        '(
+          ("g" todo "TODO|DOING|NEXT")
+          ("c" "Agenda view"
+           (
+            (agenda "" ((org-agenda-span 1)) )
+            (todo "DOING|WAITING|NEXT")
+            (todo "TODO"
+                  ((org-agenda-overriding-header "\nUnscheduled TODO")
+                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp))
+                   ))
+          )))) 
+  (defun org-agenda-show-todos (&optional arg)
+    (interactive "P")
+    (org-agenda arg "g"))
+  (spacemacs/set-leader-keys "ot" 'org-agenda-show-todos)
+  ;; schedule bound to SPC o a
+  (defun org-agenda-show-schedule (&optional arg)
+    (interactive "P")
+    (org-agenda arg "c")) 
+  (spacemacs/set-leader-keys "oa" 'org-agenda-show-schedule)
+  (defun org-agenda-show-week (&optional arg)
+    (interactive "P")
+    (org-agenda arg "a")) 
+  (spacemacs/set-leader-keys "ow" 'org-agenda-show-week) 
+
+
+  (setq org-refile-targets '(
+                             ("~/org/plan.org" :maxlevel . 1)
+                             ("~/org/abe.org" :maxlevel . 4)
+                             ))
+  ;; super agenda
+  (org-super-agenda-mode)
+  
+  ;;(let ((deadline-date  (org-read-date nil nil "+7") ) )
+  (setq org-super-agenda-groups
+         '(
+           (:name "Deadlines"
+                  :deadline t)
+           (:name "Active Projects/Stories"
+                  :tag ("story" "project")
+                  :and (:children t :todo "DOING")
+                  )
+           (:name "Active Tasks"
+                  :and (:not (:children t) :todo "DOING")
+                  )
+           (:name "Waiting"
+                  :todo "WAITING"
+                  )
+           (:name "Next"
+                  :todo "NEXT"
+                  )
+           (:name ""
+                  :and (:not (:children t) :todo "DOING")
+                  )
+           (:name "Today"
+                  :tag "chores"
+                  :time-grid t)
+           (:name "Personal"
+                  :tag "personal"
+                  :and (:habit t
+                  :not (:tag "work")))
+           (:name "Work"
+                  :tag ("work" "abe"))
+           (:name "Next"
+                  :todo "NEXT" )
+           ;;(:auto-category t)
+           )) 
+  ;;) 
+
   ( setq org-capture-templates
-         (quote (("t" "todo" entry (file "~/org/todo.org")
-                  "* TODO %?\n %i\n %a" :clock-in t :clock-resume t))))
+         ;; todos
+         '( ("t" "todo" entry (file "~/org/inbox.org")
+                  "* TODO %?\n %i\n %a" :clock-in t :clock-resume t)
+         ;; general notes
+         ("n" "note" entry (file "~/org/inbox.org")
+                  "* NOTE %?\n %i\n %a" :clock-in t :clock-resume t)
+
+         ;; local notes that won't be pushed to git
+         ("N" "local" entry (file "~/org/localnotes.org")
+          "* NOTE %?\n %i\n %a" :clock-in t :clock-resume t)
+         ("T" "local" entry (file "~/org/localtodo.org")
+          "* TODO %?\n %i\n %a" :clock-in t :clock-resume t)
+         ) )
 
   (spacemacs/set-leader-keys
     "oc" 'org-capture)
 
+  (spacemacs/set-leader-keys
+    "op" 'org-columns)
+
+  (spacemacs/set-leader-keys
+    "oq" 'org-columns-quit)
+
+  (defun magit-diff-master (&optional args)
+    "Show diff range develop...HEAD"
+    (interactive)
+    (magit-diff "master" args))
+  (spacemacs/set-leader-keys "gdm" 'magit-diff-master)
+  (spacemacs/set-leader-keys "gdd" 'magit-diff)
+
+
   ( spacemacs/set-leader-keys-for-major-mode 'c++-mode "j" 'semantic-ia-fast-jump)
+
+  ( spacemacs/set-leader-keys-for-major-mode 'c++-mode "s" 'helm-gtags-dwim)
 
   ( setq python-shell-interpreter "c:/Users/Alrehn/Anaconda3/Scripts/ipython3.exe")
 
@@ -333,11 +554,7 @@ you should place your code here."
   ;; babel langauge support
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '((sql . t)))
-
-  (add-to-list 'org-babel-default-header-args:sql '(:engine . "postgresql"))
-  (add-to-list 'org-babel-default-header-args:sql '(:cmdline . "-h studentdb.csc.uvic.ca -U alrm imdb"))
-  (add-to-list 'org-babel-default-header-args:sql '(:exports . "both"))
+   '((sql . t))) 
 
   ;; make this a variable
   (add-hook 'c++-mode-hook
@@ -345,13 +562,6 @@ you should place your code here."
                ( setq company-clang-arguments '("-std=c++11" "-stdlib=libc++" "-Ic:\\vs_dev_lib\\include" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++\\x86_64-w64-mingw32"))
                ( setq flycheck-clang-args '("-std=c++11" "-stdlib=libc++" "-Ic:\\vs_dev_lib\\include" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++" "-Ic:\\mingw64\\x86_64-w64-mingw32\\include\\c++\\x86_64-w64-mingw32"))
                             ))
-
-
-  ;; Failed attempt to get bash for windows working in emacs shell
-  ;; ( setq-default explicit-shell-file-name "c:/Windows/System32/bash.exe")
-  ;; ( setq-default shell-file-name "bash")
-  ;; ( setq-default explicit-bash-args '("--noediting" "--login" "-i"))
-  ;; (setenv "SHELL" shell-file-name)
 
     )
 ;; Do not write anything past this comment. This is where Emacs will
@@ -361,9 +571,10 @@ you should place your code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(org-modules (quote (org-habit)))
  '(package-selected-packages
    (quote
-    (yapfify uuidgen py-isort org-projectile org-download live-py-mode link-hint hide-comnt git-link flyspell-correct-helm flyspell-correct eyebrowse evil-visual-mark-mode evil-unimpaired evil-ediff dumb-jump company-emacs-eclim eclim column-enforce-mode stickyfunc-enhance srefactor helm-flyspell auto-dictionary pyvenv pytest pyenv-mode py-yapf pip-requirements hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic f git-auto-commit-mode rcirc-notify rcirc-color ws-butler window-numbering volatile-highlights vi-tilde-fringe toc-org spaceline s powerline smooth-scrolling smeargle restart-emacs rainbow-delimiters popwin persp-mode pcre2el paradox hydra spinner page-break-lines orgit org-repo-todo org-present org-pomodoro alert log4e gntp org-plus-contrib org-bullets open-junk-file neotree move-text magit-gitflow macrostep lorem-ipsum linum-relative leuven-theme info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile helm-gitignore request helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger flycheck-pos-tip flycheck pkg-info epl flx-ido flx fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-args evil-anzu anzu eval-sexp-fu highlight elisp-slime-nav disaster define-word company-statistics company-quickhelp pos-tip company-c-headers company cmake-mode clean-aindent-mode clang-format buffer-move bracketed-paste auto-yasnippet yasnippet auto-highlight-symbol auto-compile packed dash aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup quelpa package-build use-package which-key bind-key bind-map evil spacemacs-theme)))
+    (org-super-agenda ht ggtags groovy-imports pcache winum fuzzy flyspell-lazy helm-gtags powershell flycheck-irony company-irony irony yaml-mode org-outlook groovy-mode mmm-mode markdown-toc markdown-mode gh-md ensime sbt-mode scala-mode xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc company-tern dash-functional tern coffee-mode reveal-in-osx-finder pbcopy osx-trash osx-dictionary launchctl sql-indent org goto-chg undo-tree diminish yapfify uuidgen py-isort org-projectile org-download live-py-mode link-hint hide-comnt git-link flyspell-correct-helm flyspell-correct eyebrowse evil-visual-mark-mode evil-unimpaired evil-ediff dumb-jump company-emacs-eclim eclim column-enforce-mode stickyfunc-enhance srefactor helm-flyspell auto-dictionary pyvenv pytest pyenv-mode py-yapf pip-requirements hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic f git-auto-commit-mode rcirc-notify rcirc-color ws-butler window-numbering volatile-highlights vi-tilde-fringe toc-org spaceline s powerline smooth-scrolling smeargle restart-emacs rainbow-delimiters popwin persp-mode pcre2el paradox hydra spinner page-break-lines orgit org-repo-todo org-present org-pomodoro alert log4e gntp org-plus-contrib org-bullets open-junk-file neotree move-text magit-gitflow macrostep lorem-ipsum linum-relative leuven-theme info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile helm-gitignore request helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger flycheck-pos-tip flycheck pkg-info epl flx-ido flx fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-args evil-anzu anzu eval-sexp-fu highlight elisp-slime-nav disaster define-word company-statistics company-quickhelp pos-tip company-c-headers company cmake-mode clean-aindent-mode clang-format buffer-move bracketed-paste auto-yasnippet yasnippet auto-highlight-symbol auto-compile packed dash aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup quelpa package-build use-package which-key bind-key bind-map evil spacemacs-theme)))
  '(safe-local-variable-values
    (quote
     ((company-clang-arguments "-Ic:/vs_dev_lib/include/")
