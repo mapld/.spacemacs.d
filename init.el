@@ -451,7 +451,7 @@ you should place your code here."
                   ((org-agenda-overriding-header "\nUnscheduled TODO")
                    (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp))
                    ))
-          )))) 
+          ))))
   (defun org-agenda-show-todos (&optional arg)
     (interactive "P")
     (org-agenda arg "g"))
@@ -477,8 +477,8 @@ you should place your code here."
   ;;(let ((deadline-date  (org-read-date nil nil "+7") ) )
   (setq org-super-agenda-groups
          '(
-           (:name "Deadlines"
-                  :deadline t)
+;;           (:name "Deadlines"
+;;                  :deadline t)
            (:name "Active Projects/Stories"
                   :tag ("story" "project")
                   :and (:children t :todo "DOING")
@@ -500,9 +500,11 @@ you should place your code here."
            (:name "Personal"
                   :tag "personal"
                   :and (:habit t
-                  :not (:tag "work")))
+                  :not (:tag ("work" "school"))))
            (:name "Work"
                   :tag ("work" "abe"))
+           (:name "School"
+                  :tag ("school"))
            (:name "Next"
                   :todo "NEXT" )
            ;;(:auto-category t)
