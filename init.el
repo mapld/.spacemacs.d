@@ -496,7 +496,8 @@ you should place your code here."
                   :and (:not (:children t) :todo "DOING")
                   )
            (:name "Today"
-                  :time-grid t)
+                  :time-grid t
+                  :tag ("today" "chores"))
            (:name "Personal"
                   :tag "personal"
                   :and (:habit t
