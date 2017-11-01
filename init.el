@@ -19,6 +19,7 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
+     ruby
      windows-scripts
      yaml
      javascript
@@ -321,15 +322,22 @@ you should place your code here."
   (add-hook 'c++-mode-hook 'irony-mode)
   (add-hook 'c-mode-hook 'irony-mode)
 
+
   (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
-  (eval-after-load 'c++-mode
-    (when (boundp 'company-backends)
-    (make-local-variable 'company-backends)
-    (setq company-backends (delete 'company-dabbrev-code company-backends))))
+  (add-hook 'c++-mode-hook
+            (lambda ()
+              (add-to-list (make-local-variable 'company-backends)
+                           'company-irony)))
 
-  (eval-after-load 'company
-    '(add-to-list 'company-backends 'company-irony))
+;;  (eval-after-load 'c++-mode
+;;    (when (boundp 'company-backends)
+;;    (make-local-variable 'company-backends)
+;;    (setq company-backends (delete 'company-dabbrev-code company-backends))
+;;    (add-to-list (company-backends) 'company-irony)))
+
+;;  (eval-after-load 'company
+;;    '(add-to-list 'company-backends 'company-irony))
 
   (eval-after-load 'flycheck
     '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
@@ -338,20 +346,14 @@ you should place your code here."
   ;;  (irony-mode 1)
   ;;  (company-mode))
 
-  ;; replace the `completion-at-point' and `complete-symbol' bindings in
-  ;; irony-mode's buffers by irony-mode's function
-  ;;(add-to-list 'auto-mode-alist '("\\.cpp$" . irony-mode))
-  ;;(add-to-list 'auto-mode-alist '("\\.c$" . irony-mode))
-  ;;(add-to-list 'auto-mode-alist '("\\.h$" . irony-mode))
+  (defun my-irony-mode-hook ()
+    (define-key irony-mode-map [remap completion-at-point]
+      'irony-completion-at-point-async)
+     (define-key irony-mode-map [remap complete-symbol]
+      'irony-completion-at-point-async))
 
- ;; (defun my-irony-mode-hook ()
- ;;   (define-key irony-mode-map [remap completion-at-point]
- ;;     'irony-completion-at-point-async)
- ;;    (define-key irony-mode-map [remap complete-symbol]
- ;;     'irony-completion-at-point-async))
-
- ;; (add-hook 'irony-mode-hook 'my-irony-mode-hook)
- ;; (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+  (add-hook 'irony-mode-hook 'my-irony-mode-hook)
+  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
   (when (boundp 'w32-pipe-read-delay)
     (setq w32-pipe-read-delay 0))
@@ -411,6 +413,26 @@ you should place your code here."
 
   ;; mobileorg
   (setq org-mobile-directory "C:/Users/Alrehn/Dropbox/Apps/MobileOrg")
+  (if (eq system-type 'darwin)
+       (setq org-mobile-directory "/Users/arrehnby/Dropbox/Apps/MobileOrg")
+     )
+  ;; (defvar org-mobile-sync-idle-secs (* 60 10)) 
+  ;; (defun org-mobile-sync ()
+  ;;   (interactive)
+  ;;   (org-mobile-pull)
+  ;;   (org-mobile-push)) 
+  ;; (defun org-mobile-sync-enable ()
+  ;;   "enable mobile org idle sync"
+  ;;   (interactive)
+  ;;   (setq org-mobile-sync-timer
+  ;;         (run-with-idle-timer org-mobile-sync-idle-secs t
+  ;;                              'org-mobile-sync))) 
+  ;; (defun org-mobile-sync-disable ()
+  ;;   "disable mobile org idle sync"
+  ;;   (interactive)
+  ;;   (cancel-timer org-mobile-sync-timer)) 
+  ;; (org-mobile-sync-enable)
+
 
   ;; autocommit var
   ( setq-default gac-automatically-push-p t )
@@ -468,17 +490,22 @@ you should place your code here."
 
 
   (setq org-refile-targets '(
-                             ("~/org/plan.org" :maxlevel . 1)
-                             ("~/org/abe.org" :maxlevel . 4)
+                             ("~/org/plan.org" :maxlevel . 2)
+                             ("~/org/abe.org" :maxlevel . 6)
+                             ("~/org/CSC475.org" :maxlevel . 1)
+                             ("~/org/CSC421.org" :maxlevel . 1)
+                             ("~/org/CSC483A.org" :maxlevel . 1)
+                             ("~/org/MUS115.org" :maxlevel . 1)
+                             ("~/org/AHVS311.org" :maxlevel . 1)
                              ))
   ;; super agenda
   (org-super-agenda-mode)
-  
+
   ;;(let ((deadline-date  (org-read-date nil nil "+7") ) )
   (setq org-super-agenda-groups
          '(
-;;           (:name "Deadlines"
-;;                  :deadline t)
+           (:name "Deadlines"
+                  :deadline t)
            (:name "Active Projects/Stories"
                   :tag ("story" "project")
                   :and (:children t :todo "DOING")
@@ -556,7 +583,10 @@ you should place your code here."
   ;; babel langauge support
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '((sql . t))) 
+   '((sql . t)
+   (python . t))) 
+
+  (setq org-src-tab-acts-natively t) 
 
   ;; make this a variable
   (add-hook 'c++-mode-hook
@@ -576,7 +606,7 @@ you should place your code here."
  '(org-modules (quote (org-habit)))
  '(package-selected-packages
    (quote
-    (org-super-agenda ht ggtags groovy-imports pcache winum fuzzy flyspell-lazy helm-gtags powershell flycheck-irony company-irony irony yaml-mode org-outlook groovy-mode mmm-mode markdown-toc markdown-mode gh-md ensime sbt-mode scala-mode xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc company-tern dash-functional tern coffee-mode reveal-in-osx-finder pbcopy osx-trash osx-dictionary launchctl sql-indent org goto-chg undo-tree diminish yapfify uuidgen py-isort org-projectile org-download live-py-mode link-hint hide-comnt git-link flyspell-correct-helm flyspell-correct eyebrowse evil-visual-mark-mode evil-unimpaired evil-ediff dumb-jump company-emacs-eclim eclim column-enforce-mode stickyfunc-enhance srefactor helm-flyspell auto-dictionary pyvenv pytest pyenv-mode py-yapf pip-requirements hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic f git-auto-commit-mode rcirc-notify rcirc-color ws-butler window-numbering volatile-highlights vi-tilde-fringe toc-org spaceline s powerline smooth-scrolling smeargle restart-emacs rainbow-delimiters popwin persp-mode pcre2el paradox hydra spinner page-break-lines orgit org-repo-todo org-present org-pomodoro alert log4e gntp org-plus-contrib org-bullets open-junk-file neotree move-text magit-gitflow macrostep lorem-ipsum linum-relative leuven-theme info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile helm-gitignore request helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger flycheck-pos-tip flycheck pkg-info epl flx-ido flx fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-args evil-anzu anzu eval-sexp-fu highlight elisp-slime-nav disaster define-word company-statistics company-quickhelp pos-tip company-c-headers company cmake-mode clean-aindent-mode clang-format buffer-move bracketed-paste auto-yasnippet yasnippet auto-highlight-symbol auto-compile packed dash aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup quelpa package-build use-package which-key bind-key bind-map evil spacemacs-theme)))
+    (rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv rake minitest chruby bundler inf-ruby org-super-agenda ht ggtags groovy-imports pcache winum fuzzy flyspell-lazy helm-gtags powershell flycheck-irony company-irony irony yaml-mode org-outlook groovy-mode mmm-mode markdown-toc markdown-mode gh-md ensime sbt-mode scala-mode xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc company-tern dash-functional tern coffee-mode reveal-in-osx-finder pbcopy osx-trash osx-dictionary launchctl sql-indent org goto-chg undo-tree diminish yapfify uuidgen py-isort org-projectile org-download live-py-mode link-hint hide-comnt git-link flyspell-correct-helm flyspell-correct eyebrowse evil-visual-mark-mode evil-unimpaired evil-ediff dumb-jump company-emacs-eclim eclim column-enforce-mode stickyfunc-enhance srefactor helm-flyspell auto-dictionary pyvenv pytest pyenv-mode py-yapf pip-requirements hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic f git-auto-commit-mode rcirc-notify rcirc-color ws-butler window-numbering volatile-highlights vi-tilde-fringe toc-org spaceline s powerline smooth-scrolling smeargle restart-emacs rainbow-delimiters popwin persp-mode pcre2el paradox hydra spinner page-break-lines orgit org-repo-todo org-present org-pomodoro alert log4e gntp org-plus-contrib org-bullets open-junk-file neotree move-text magit-gitflow macrostep lorem-ipsum linum-relative leuven-theme info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile helm-gitignore request helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger flycheck-pos-tip flycheck pkg-info epl flx-ido flx fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-args evil-anzu anzu eval-sexp-fu highlight elisp-slime-nav disaster define-word company-statistics company-quickhelp pos-tip company-c-headers company cmake-mode clean-aindent-mode clang-format buffer-move bracketed-paste auto-yasnippet yasnippet auto-highlight-symbol auto-compile packed dash aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup quelpa package-build use-package which-key bind-key bind-map evil spacemacs-theme)))
  '(safe-local-variable-values
    (quote
     ((company-clang-arguments "-Ic:/vs_dev_lib/include/")
