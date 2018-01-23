@@ -30,8 +30,8 @@ values."
      ;; ----------------------------------------------------------------
 
      (c-c++ :variables
-              ;;c-c++-enable-clang-support t
               c-c++-default-mode-for-headers 'c++-mode)
+
      auto-completion
      ;; better-defaults
      emacs-lisp
@@ -46,8 +46,8 @@ values."
      ;; version-control
      java
      c-c++
+     c++-rtags
      python
-     rcirc
 
      sql
 
@@ -57,13 +57,12 @@ values."
 
      markdown
 
-     gtags
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-dotspacemacs-additional-packages '(git-auto-commit-mode ensime sbt-mode groovy-mode groovy-imports sql-indent org-super-agenda irony company-irony flycheck-irony flycheck-pos-tip helm-gtags flyspell-lazy)
+   dotspacemacs-additional-packages '(git-auto-commit-mode ensime sbt-mode groovy-mode groovy-imports sql-indent org-super-agenda irony company-irony flycheck-irony flycheck-pos-tip helm-gtags flyspell-lazy meghanada)
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '()
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
@@ -267,8 +266,8 @@ before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
   (setq-default helm-recentf-fuzzy-match t)
   (setq-default helm-mode-fuzzy-match t)
-  (push '("melpa-stable" . "stable.melpa.org/packages/") configuration-layer--elpa-archives)
-  (push '(ensime . "melpa-stable") package-pinned-packages)
+  ;;(push '("melpa-stable" . "stable.melpa.org/packages/") configuration-layer--elpa-archives)
+  ;; (push '(ensime . "melpa-stable") package-pinned-packages)
   )
 
 (defun dotspacemacs/user-config ()
@@ -287,12 +286,15 @@ you should place your code here."
   (setq ispell-program-name "aspell")
 
   ;; java
-  (setq eclim-eclipse-dirs "C:/Users/Alrehn/java-neon/eclipse"
-        eclim-executable "C:/Users/Alrehn/java-neon/eclipse/eclim")
+  ;; (setq eclim-eclipse-dirs "C:/Users/Alrehn/java-neon/eclipse"
+  ;;       eclim-executable "C:/Users/Alrehn/java-neon/eclipse/eclim")
 
-  (use-package ensime
-    :commands ensime ensime-mode)
-  (add-hook 'java-mode-hook 'ensime-mode)
+  ;; (use-package ensime
+  ;;   :commands ensime ensime-mode)
+  ;; (add-hook 'java-mode-hook 'ensime-mode)
+
+  ;; ( define-key evil-normal-state-map (kbd "C-O") 'ensime-edit-definition)
+  ;; ( define-key evil-normal-state-map (kbd "C-P") 'ensime-edit-definition-other-window)
 
   ;; groovy
   (add-to-list 'auto-mode-alist '("\\.groovy\\'" . groovy-mode))
@@ -314,8 +316,6 @@ you should place your code here."
      'self-insert-command
      minibuffer-local-completion-map))
 
-  ( define-key evil-normal-state-map (kbd "C-O") 'ensime-edit-definition)
-  ( define-key evil-normal-state-map (kbd "C-P") 'ensime-edit-definition-other-window)
 
   ;; company mode
   (setq company-idle-delay 0.8)
@@ -481,12 +481,12 @@ you should place your code here."
   ;; schedule bound to SPC o a
   (defun org-agenda-show-schedule (&optional arg)
     (interactive "P")
-    (org-agenda arg "c")) 
+    (org-agenda arg "c"))
   (spacemacs/set-leader-keys "oa" 'org-agenda-show-schedule)
   (defun org-agenda-show-week (&optional arg)
     (interactive "P")
-    (org-agenda arg "a")) 
-  (spacemacs/set-leader-keys "ow" 'org-agenda-show-week) 
+    (org-agenda arg "a"))
+  (spacemacs/set-leader-keys "ow" 'org-agenda-show-week)
 
 
   (setq org-refile-targets '(
@@ -539,20 +539,20 @@ you should place your code here."
            )) 
   ;;) 
 
-  ( setq org-capture-templates
-         ;; todos
-         '( ("t" "todo" entry (file "~/org/inbox.org")
-                  "* TODO %?\n %i\n %a" :clock-in t :clock-resume t)
-         ;; general notes
-         ("n" "note" entry (file "~/org/inbox.org")
-                  "* NOTE %?\n %i\n %a" :clock-in t :clock-resume t)
+  ;; ( setq org-capture-templates
+  ;;        ;; todos
+  ;;        '( ("t" "todo" entry (file "~/org/inbox.org")
+  ;;                 "* TODO %?\n %i\n %a" :clock-in t :clock-resume t)
+  ;;        ;; general notes
+  ;;        ("n" "note" entry (file "~/org/inbox.org")
+  ;;                 "* NOTE %?\n %i\n %a" :clock-in t :clock-resume t)
 
-         ;; local notes that won't be pushed to git
-         ("N" "local" entry (file "~/org/localnotes.org")
-          "* NOTE %?\n %i\n %a" :clock-in t :clock-resume t)
-         ("T" "local" entry (file "~/org/localtodo.org")
-          "* TODO %?\n %i\n %a" :clock-in t :clock-resume t)
-         ) )
+  ;;        ;; local notes that won't be pushed to git
+  ;;        ("N" "local" entry (file "~/org/localnotes.org")
+  ;;         "* NOTE %?\n %i\n %a" :clock-in t :clock-resume t)
+  ;;        ("T" "local" entry (file "~/org/localtodo.org")
+  ;;         "* TODO %?\n %i\n %a" :clock-in t :clock-resume t)
+  ;;        ) )
 
   (spacemacs/set-leader-keys
     "oc" 'org-capture)
@@ -606,7 +606,7 @@ you should place your code here."
  '(org-modules (quote (org-habit)))
  '(package-selected-packages
    (quote
-    (rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv rake minitest chruby bundler inf-ruby org-super-agenda ht ggtags groovy-imports pcache winum fuzzy flyspell-lazy helm-gtags powershell flycheck-irony company-irony irony yaml-mode org-outlook groovy-mode mmm-mode markdown-toc markdown-mode gh-md ensime sbt-mode scala-mode xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc company-tern dash-functional tern coffee-mode reveal-in-osx-finder pbcopy osx-trash osx-dictionary launchctl sql-indent org goto-chg undo-tree diminish yapfify uuidgen py-isort org-projectile org-download live-py-mode link-hint hide-comnt git-link flyspell-correct-helm flyspell-correct eyebrowse evil-visual-mark-mode evil-unimpaired evil-ediff dumb-jump company-emacs-eclim eclim column-enforce-mode stickyfunc-enhance srefactor helm-flyspell auto-dictionary pyvenv pytest pyenv-mode py-yapf pip-requirements hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic f git-auto-commit-mode rcirc-notify rcirc-color ws-butler window-numbering volatile-highlights vi-tilde-fringe toc-org spaceline s powerline smooth-scrolling smeargle restart-emacs rainbow-delimiters popwin persp-mode pcre2el paradox hydra spinner page-break-lines orgit org-repo-todo org-present org-pomodoro alert log4e gntp org-plus-contrib org-bullets open-junk-file neotree move-text magit-gitflow macrostep lorem-ipsum linum-relative leuven-theme info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile helm-gitignore request helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger flycheck-pos-tip flycheck pkg-info epl flx-ido flx fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-args evil-anzu anzu eval-sexp-fu highlight elisp-slime-nav disaster define-word company-statistics company-quickhelp pos-tip company-c-headers company cmake-mode clean-aindent-mode clang-format buffer-move bracketed-paste auto-yasnippet yasnippet auto-highlight-symbol auto-compile packed dash aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup quelpa package-build use-package which-key bind-key bind-map evil spacemacs-theme)))
+    (realgud test-simple loc-changes load-relative ivy-rtags ivy google-c-style helm-rtags flycheck-rtags company-rtags rtags cmake-ide levenshtein rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv rake minitest chruby bundler inf-ruby org-super-agenda ht ggtags groovy-imports pcache winum fuzzy flyspell-lazy helm-gtags powershell flycheck-irony company-irony irony yaml-mode org-outlook groovy-mode mmm-mode markdown-toc markdown-mode gh-md ensime sbt-mode scala-mode xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc company-tern dash-functional tern coffee-mode reveal-in-osx-finder pbcopy osx-trash osx-dictionary launchctl sql-indent org goto-chg undo-tree diminish yapfify uuidgen py-isort org-projectile org-download live-py-mode link-hint hide-comnt git-link flyspell-correct-helm flyspell-correct eyebrowse evil-visual-mark-mode evil-unimpaired evil-ediff dumb-jump company-emacs-eclim eclim column-enforce-mode stickyfunc-enhance srefactor helm-flyspell auto-dictionary pyvenv pytest pyenv-mode py-yapf pip-requirements hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic f git-auto-commit-mode rcirc-notify rcirc-color ws-butler window-numbering volatile-highlights vi-tilde-fringe toc-org spaceline s powerline smooth-scrolling smeargle restart-emacs rainbow-delimiters popwin persp-mode pcre2el paradox hydra spinner page-break-lines orgit org-repo-todo org-present org-pomodoro alert log4e gntp org-plus-contrib org-bullets open-junk-file neotree move-text magit-gitflow macrostep lorem-ipsum linum-relative leuven-theme info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile helm-gitignore request helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger flycheck-pos-tip flycheck pkg-info epl flx-ido flx fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-args evil-anzu anzu eval-sexp-fu highlight elisp-slime-nav disaster define-word company-statistics company-quickhelp pos-tip company cmake-mode clean-aindent-mode clang-format buffer-move bracketed-paste auto-yasnippet yasnippet auto-highlight-symbol auto-compile packed dash aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup quelpa package-build use-package which-key bind-key bind-map evil spacemacs-theme)))
  '(safe-local-variable-values
    (quote
     ((company-clang-arguments "-Ic:/vs_dev_lib/include/")
@@ -618,3 +618,29 @@ you should place your code here."
  ;; If there is more than one, they won't work right.
  '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
  '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
+(defun dotspacemacs/emacs-custom-settings ()
+  "Emacs custom settings.
+This is an auto-generated function, do not modify its content directly, use
+Emacs customize menu instead.
+This function is called at the very end of Spacemacs initialization."
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(org-modules (quote (org-habit)))
+ '(package-selected-packages
+   (quote
+    (zenburn-theme yasnippet-snippets symon string-inflection spaceline-all-the-icons all-the-icons memoize font-lock+ solarized-theme ruby-refactor pippel password-generator overseer org-category-capture org-brain nameless mvn monokai-theme meghanada maven-test-mode importmagic epc ctable concurrent deferred helm-purpose window-purpose imenu-list gradle-mode evil-org ghub evil-lion evil-cleverparens paredit editorconfig company-c-headers realgud test-simple loc-changes load-relative ivy-rtags ivy google-c-style helm-rtags flycheck-rtags company-rtags rtags cmake-ide levenshtein rvm ruby-tools ruby-test-mode rubocop rspec-mode robe rbenv rake minitest chruby bundler inf-ruby org-super-agenda ht ggtags groovy-imports pcache winum fuzzy flyspell-lazy helm-gtags powershell flycheck-irony company-irony irony yaml-mode org-outlook groovy-mode mmm-mode markdown-toc markdown-mode gh-md ensime sbt-mode scala-mode xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc company-tern dash-functional tern coffee-mode reveal-in-osx-finder pbcopy osx-trash osx-dictionary launchctl sql-indent org goto-chg undo-tree diminish yapfify uuidgen py-isort org-projectile org-download live-py-mode link-hint hide-comnt git-link flyspell-correct-helm flyspell-correct eyebrowse evil-visual-mark-mode evil-unimpaired evil-ediff dumb-jump company-emacs-eclim eclim column-enforce-mode stickyfunc-enhance srefactor helm-flyspell auto-dictionary pyvenv pytest pyenv-mode py-yapf pip-requirements hy-mode helm-pydoc cython-mode company-anaconda anaconda-mode pythonic f git-auto-commit-mode rcirc-notify rcirc-color ws-butler window-numbering volatile-highlights vi-tilde-fringe toc-org spaceline s powerline smooth-scrolling smeargle restart-emacs rainbow-delimiters popwin persp-mode pcre2el paradox hydra spinner page-break-lines orgit org-repo-todo org-present org-pomodoro alert log4e gntp org-plus-contrib org-bullets open-junk-file neotree move-text magit-gitflow macrostep lorem-ipsum linum-relative leuven-theme info+ indent-guide ido-vertical-mode hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile helm-gitignore request helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger flycheck-pos-tip flycheck pkg-info epl flx-ido flx fill-column-indicator fancy-battery expand-region exec-path-from-shell evil-visualstar evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit magit magit-popup git-commit with-editor evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-args evil-anzu anzu eval-sexp-fu highlight elisp-slime-nav disaster define-word company-statistics company-quickhelp pos-tip company cmake-mode clean-aindent-mode clang-format buffer-move bracketed-paste auto-yasnippet yasnippet auto-highlight-symbol auto-compile packed dash aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core async ac-ispell auto-complete popup quelpa package-build use-package which-key bind-key bind-map evil spacemacs-theme)))
+ '(safe-local-variable-values
+   (quote
+    ((company-clang-arguments "-Ic:/vs_dev_lib/include/")
+     (company-clang-arguments "c:/vs_dev_lib/include/")))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(company-tooltip-common ((t (:inherit company-tooltip :weight bold :underline nil))))
+ '(company-tooltip-common-selection ((t (:inherit company-tooltip-selection :weight bold :underline nil)))))
+)
